@@ -132,7 +132,14 @@ void reminder_init(void)
 	g_assert_null(reminders);
 
 	char* zoneinfo_link = realpath("/etc/localtime", NULL);
-	current_tz = icaltimezone_get_builtin_timezone(zoneinfo_link + strlen("/usr/share/zoneinfo/"));
+	g_assert_nonnull(zoneinfo_link);
+	char* X = "/zoneinfo/";
+	char* TZ = strstr(zoneinfo_link, X);
+
+	if (TZ) {
+		TZ += strlen(X);
+		current_tz = icaltimezone_get_builtin_timezone(TZ);
+	}
 	free(zoneinfo_link);
 
 	update_current_time();

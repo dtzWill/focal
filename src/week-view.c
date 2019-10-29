@@ -629,7 +629,14 @@ GtkWidget* week_view_new(void)
 	WeekView* cw = g_object_new(FOCAL_TYPE_WEEK_VIEW, NULL);
 
 	char* zoneinfo_link = realpath("/etc/localtime", NULL);
-	cw->current_tz = icaltimezone_get_builtin_timezone(zoneinfo_link + strlen("/usr/share/zoneinfo/"));
+	g_assert_nonnull(zoneinfo_link);
+	char* X = "/zoneinfo/";
+	char* TZ = strstr(zoneinfo_link, X);
+
+	if (TZ) {
+		TZ += strlen(X);
+		cw->current_tz = icaltimezone_get_builtin_timezone(TZ);
+	}
 	free(zoneinfo_link);
 
 	update_current_time(cw);

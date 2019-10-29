@@ -647,10 +647,17 @@ Calendar* outlook_calendar_new(CalendarConfig* cfg)
 	oc->sync_url = NULL;
 
 	// TODO: error handling
-	char* localtime_link = realpath("/etc/localtime", NULL);
-	oc->tz = g_strdup(localtime_link + strlen("/usr/share/zoneinfo/"));
-	free(localtime_link);
-	oc->ical_tz = icaltimezone_get_builtin_timezone(oc->tz);
+	char* zoneinfo_link = realpath("/etc/localtime", NULL);
+	g_assert_nonnull(zoneinfo_link);
+	char* X = "/zoneinfo/";
+	char* TZ = strstr(zoneinfo_link, X);
+
+	if (TZ) {
+		TZ += strlen(X);
+		oc->tz = g_strdup(TZ);
+		oc->ical_tz = icaltimezone_get_builtin_timezone(oc->tz);
+	}
+	free(zoneinfo_link);
 	oc->prefer_tz = g_strdup_printf("Prefer: outlook.timezone=\"%s\"", oc->tz);
 
 	return FOCAL_CALENDAR(oc);
