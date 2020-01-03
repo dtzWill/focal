@@ -241,7 +241,7 @@ static void week_view_draw(WeekView* wv, cairo_t* cr)
 		double x = wv->x + SIDEBAR_WIDTH + d * day_width;
 		char day_label[16];
 		time_t tt = icaltime_as_timet(day);
-		struct tm* t = localtime(&tt);
+		struct tm* t = gmtime(&tt);
 
 		// day of month
 		strftime(day_label, 16, "%e", t);
